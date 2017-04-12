@@ -1,4 +1,4 @@
-# swiftAES
+# SwiftAES
 
 One Paragraph of project description goes here
 
