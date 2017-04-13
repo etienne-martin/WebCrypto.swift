@@ -18,7 +18,7 @@ In comparison with other available solutions, here are the results obtained when
 
 ## Usage 
 
-1. Drag and drop [WebCrypto.swift](http://adawd.cawd) and [WebCrypto.js](http://adawd.cawd) into your Xcode project.  
+1. Drag and drop [WebCrypto.swift](https://raw.githubusercontent.com/etienne-martin/WebCrypto.swift/master/WebCrypto.swift) and [WebCrypto.js](https://raw.githubusercontent.com/etienne-martin/WebCrypto.swift/master/WebCrypto.js) into your Xcode project.  
 2. Initialize the WebCrypto class in your code:
 
 ```swift
