@@ -4,7 +4,7 @@ A small collection of cryptographic functions based on the javascript WebCrypto 
 
 ### The story
 
-The original [CryptoJS.swift](https://github.com/etienne-martin/CryptoJS.swift) library was developed in 2015 as I needed a way to share the same cryptography between a swift application and a web app. My goal was achieved by using the same javascript [CryptoJS library](https://github.com/brix/crypto-js) in both environments. CryptoJS now suffers severe performance limitations over the new [WebCrypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API). 
+The original [CryptoJS.swift](https://github.com/etienne-martin/CryptoJS.swift) library was developed in 2015 as I needed a way to share the same cryptography between a swift application and a web app. My goal was achieved by using the same javascript [CryptoJS library](https://github.com/brix/crypto-js) in both environments. CryptoJS now suffers severe performance limitations over the new [WebCrypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API) and is no longer maintained. 
 
 This project leverages the power of the WebCrypto API while keeping backwards compatiblity with CryptoJS.swift. All methods are asynchronous and run on a separate thread. 
 
@@ -29,7 +29,7 @@ let crypto = WebCrypto()
 
 #### Data types conversion
 
-WebCrypto.swift works with swift's Data() type. If you need to pass a string to a method, you need to convert it to Data() before passing it as an input. 
+WebCrypto.swift works with swift's Data() type. If you need to pass a string to a method, you first need to convert it to Data() before passing it as an input. 
 
 Convert string to data:
 
@@ -45,11 +45,11 @@ let string = String(data: data, encoding: .utf8)
 
 ## AES
 
-Cipher-block chaining (CBC) mode
+The algorithm used by WebCrypto.swift is the cipher-block chaining (CBC) mode. For key generation, it uses PKCS7 as the padding method.
 
 ### Password-based encryption
 
-This is a paragraph explaining that WebCrypto.swift uses the same password derivation as openssl.
+WebCrypto.swift uses the same password derivation function as openSSL, making it compatible with openSSL and other libraries like CryptoJS.
 
 ###### Encryption
 
@@ -157,8 +157,8 @@ crypto.sha512(data: input, callback: {(hash: String?, error: Error?) in
 ## Built With
 
 * [WebCryptoAPI](https://www.w3.org/TR/WebCryptoAPI/) - JavaScript API for performing basic cryptographic operations 
-* [Forge](https://github.com/digitalbazaar/forge) - Used for the openssl key derivation function
-* [SparkMD5](https://github.com/satazor/js-spark-md5) - Used for the openssl key derivation function
+* [Forge](https://github.com/digitalbazaar/forge) - Used for the openSSL key derivation function
+* [SparkMD5](https://github.com/satazor/js-spark-md5) - Used for the openSSL key derivation function
 
 
 ## Contributing
