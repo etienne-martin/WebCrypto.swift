@@ -1,9 +1,5 @@
 # WebCrypto.swift
-One Paragraph of project description goes here
-
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+One Paragraph of project description goes here. All methods are asynchronous, runs on a seperate tread as the application. Leverages the Javascript WebCrypto API.
 
 ## Usage 
 
@@ -15,6 +11,8 @@ let crypto = WebCrypto()
 ```
 
 #### Data types conversion
+
+WebCrypto.swift works with swift's Data() type. If you need to pass a string to a method, you will need to convert it to Data() before passing it as an input. 
 
 Convert string to data:
 
