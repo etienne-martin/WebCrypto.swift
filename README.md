@@ -176,4 +176,4 @@ Build the project & test all the features before submitting your pull request.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/etienne-martin/WebCrypto.swift/blob/master/LICENSE) file for details
