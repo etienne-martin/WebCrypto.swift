@@ -77,7 +77,7 @@ crypto.decrypt(data: encrypted, key: key, iv: iv, callback: {(encrypted: Data?, 
 
 ## Encryption keys
 
-This function generates keys with lengths of 128, 192 or 256. If the length parameter is omitted, the ouput is a 256 bits key by default.
+This method generates keys with lengths of 128, 192 or 256. If the length parameter is omitted, the ouput is a 256 bits key by default.
 
 ```swift
 crypto.generateKey(callback: {(key: String?, error: Error?) in
