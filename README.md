@@ -5,55 +5,121 @@ One Paragraph of project description goes here
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-### Prerequisites
+## Usage 
 
-What things you need to install the software and how to install them
-
-```
-Give examples
+```swift
+let crypto = WebCrypto()
 ```
 
-### Installing
+## AES
 
-A step by step series of examples that tell you have to get a development env running
+#### Password-based encryption
 
-Say what the step will be
+This is a paragraph explaining that WebCrypto.swift uses the same password derivation as openssl.
 
+###### Encryption
+
+```swift
+let input = Data("This is a string".utf8)
+
+let password = "password123"
+
+crypto.encrypt(data: input, password: password, callback: {(encrypted: Data?, error: Error?) in
+    print(encrypted!)
+})
 ```
-Give the example
+###### Decryption
+
+```swift
+crypto.decrypt(data: encrypted, password: password, callback: {(decrypted: Data?, error: Error?) in
+    print(String(data: decrypted!, encoding: .utf8)!)
+})
+```
+#### Key-based encryption
+
+Accepts hex-encoded key and IV.
+
+###### Encryption
+
+```swift
+let input = Data("This is a string".utf8)
+
+let key = "6f0f1c6f0e56afd327ff07b7b63a2d8ae91ab0a2f0c8cd6889c0fc1d624ac1b8"
+let iv = "92c9d2c07a9f2e0a0d20710270047ea2"
+
+crypto.encrypt(data: input, key: key, iv: iv, callback: {(encrypted: Data?, error: Error?) in
+    print(encrypted!)
+})
 ```
 
-And repeat
+###### Decryption
 
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
+```swift
+crypto.decrypt(data: encrypted, key: key, iv: iv, callback: {(encrypted: Data?, error: Error?) in
+    print(String(data: decrypted!, encoding: .utf8)!)
+})
 ```
 
-### And coding style tests
+## Encryption keys
 
-Explain what these tests test and why
+This function generates keys with lengths of 128, 192 or 256. If the length parameter is omited, it will generate a 256 bits key by default.
 
+```swift
+crypto.generateKey(callback: {(key: String?, error: Error?) in
+    print(key!) // aacdc64d6a3f88617af1ce43666970f0e915372cadda8ecb992d215b282a8c17
+})
+
+crypto.generateKey(length: 192, callback: {(key: String?, error: Error?) in
+    print(key!) // 8c675b785838af61c4803c84fe3ba858a4556bdfcafc6c33
+})
+
+crypto.generateKey(length: 128, callback: {(key: String?, error: Error?) in
+    print(key!) // dc1afda2e1bc5f9bd513a658b853cdec
+})
 ```
-Give an example
+
+## Initialization vectors
+
+Outputs hex-encoded IV.  
+Remember to never re-use an initialization vectors. Always generate a new IV every time your encrypt!
+
+```swift
+crypto.generateIv(callback: {(iv: String?, error: Error?) in
+    print(iv!) // a408350a6ef6ceb8883173778d700b0a
+})
 ```
 
-## Deployment
+## Cryptographically secure number generator
 
-Add additional notes about how to deploy this on a live system
+Hexadecial string
+
+```swift
+crypto.generateRandomNumber(length: 16, callback: {(number: String?, error: Error?) in
+    print(number!) // aca73dd1c406bf498f1c07a3d607da9f
+})
+```
+
+## Hash functions
+
+```swift
+let input = Data("This is a string".utf8)
+
+crypto.sha1(data: input, callback: {(hash: String?, error: Error?) in
+    print(hash!) // 8332d2a25bf1a039d8d296a7b7513960b191d95a
+})
+
+crypto.sha256(data: input, callback: {(hash: String?, error: Error?) in
+    print(hash!) // a2a0d2d2f3046785436e99dcdc0a2a31b41555eed11750e0067b177b99b6c435
+})
+
+crypto.sha384(data: input, callback: {(hash: String?, error: Error?) in
+    print(hash!) // e17d41b167194e4836c63bf3cdcf15b2478cb6fda5887485d5f568c98ed45e3a9bab16e7fe68aa8fe14f683f1144fb3a
+})
+
+crypto.sha512(data: input, callback: {(hash: String?, error: Error?) in
+    print(hash!) // bc5d1ce2a9287ab94f1ed7eff379fbdab5e10d79f8f9dc4f921a2511f418e84561c8d6f63120cd960ea1f48afe09b3bffe2232bb920cc78a2bc873e05e76b30c
+})
+```
 
 ## Built With
 
@@ -64,10 +130,6 @@ Add additional notes about how to deploy this on a live system
 ## Contributing
 
 Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
 
 ## Authors
 
