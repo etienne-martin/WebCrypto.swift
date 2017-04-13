@@ -29,7 +29,7 @@ let crypto = WebCrypto()
 
 #### Data types conversion
 
-WebCrypto.swift works with swift's Data() type. If you need to pass a string to a method, you first need to convert it to Data() before passing it as an input. 
+WebCrypto.swift works with swift's data object. If you need to pass a string to a method, you first need to convert it to data before passing it as an input. 
 
 Convert string to data:
 
@@ -98,7 +98,7 @@ crypto.decrypt(data: encrypted, key: key, iv: iv, callback: {(encrypted: Data?, 
 
 ## Encryption keys
 
-This method generates 128, 192, or 256-bit keys. If the length parameter is omitted, the output is a 256-bit key by default.
+This method generates 128, 192, or 256-bit hex-encoded keys. If the length parameter is omitted, the output is a 256-bit key by default.
 
 ```swift
 crypto.generateKey(callback: {(key: String?, error: Error?) in
@@ -126,7 +126,7 @@ crypto.generateIv(callback: {(iv: String?, error: Error?) in
 
 ## Cryptographically secure number generator
 
-Hexadecial string. This method lets you get cryptographically strong random values.
+This method lets you get cryptographically strong random values. The output is a hex-encoded string.
 
 ```swift
 crypto.generateRandomNumber(length: 16, callback: {(number: String?, error: Error?) in
@@ -135,6 +135,8 @@ crypto.generateRandomNumber(length: 16, callback: {(number: String?, error: Erro
 ```
 
 ## Hash functions
+
+These methods compute the hash of a data object and output its hexadecimal digest.
 
 ```swift
 let input = Data("This is a string".utf8)
