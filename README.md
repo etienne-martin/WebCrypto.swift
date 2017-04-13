@@ -20,11 +20,12 @@ In comparison with other available solutions, here are the results obtained when
 
 1. Drag and drop [WebCrypto.swift](http://adawd.cawd) and [WebCrypto.js](http://adawd.cawd) into your Xcode project.  
 2. Initialize the WebCrypto class in your code.
-3. That's it.
 
 ```swift
 let crypto = WebCrypto()
 ```
+
+3. That's it.
 
 #### Data types conversion
 
