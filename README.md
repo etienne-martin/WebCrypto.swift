@@ -158,7 +158,7 @@ crypto.sha512(data: input, callback: {(hash: String?, error: Error?) in
 })
 ```
 
-## Built With
+## Built with
 
 * [WebCryptoAPI](https://www.w3.org/TR/WebCryptoAPI/) - JavaScript API for performing basic cryptographic operations 
 * [Forge](https://github.com/digitalbazaar/forge) - Used for the openSSL key derivation function
