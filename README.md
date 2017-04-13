@@ -7,11 +7,13 @@ These instructions will get you a copy of the project up and running on your loc
 
 ## Usage 
 
-Drag and drop [WebCrypto.swift](http://adawd.cawd) and [WebCrypto.js](http://adawd.cawd) into your Xcode project. 
+1. Drag and drop [WebCrypto.swift](http://adawd.cawd) and [WebCrypto.js](http://adawd.cawd) into your Xcode project.  
+2. Initialize the WebCrypto class in your code.
 
 ```swift
 let crypto = WebCrypto()
 ```
+
 #### Data types conversion
 
 Convert string to data:
@@ -28,7 +30,9 @@ let string = String(data: data, encoding: .utf8)
 
 ## AES
 
-#### Password-based encryption
+Cipher-block chaining (CBC) mode
+
+### Password-based encryption
 
 This is a paragraph explaining that WebCrypto.swift uses the same password derivation as openssl.
 
@@ -50,7 +54,7 @@ crypto.decrypt(data: encrypted, password: password, callback: {(decrypted: Data?
     print(String(data: decrypted!, encoding: .utf8)!)
 })
 ```
-#### Key-based encryption
+### Key-based encryption
 
 Accepts hex-encoded key and IV.
 
