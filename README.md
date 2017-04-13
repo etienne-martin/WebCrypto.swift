@@ -73,7 +73,7 @@ crypto.decrypt(data: encrypted, password: password, callback: {(decrypted: Data?
 ```
 ### Key-based encryption
 
-This method requires a key and an IV in hexadecimal format.
+This method requires a key and an IV in hexadecimal format. Use the [generateKey](https://github.com/etienne-martin/WebCrypto.swift/blob/master/README.md#encryption-keys) and [generateIv](https://github.com/etienne-martin/WebCrypto.swift#initialization-vectors) methods if you need to generate a new key and IV. **Remember to never re-use an initialization vector. Always generate a new IV every time you encrypt.**
 
 ###### Encryption
 
@@ -116,7 +116,7 @@ crypto.generateKey(length: 128, callback: {(key: String?, error: Error?) in
 
 ## Initialization vectors
 
-This method generates a 16-bit hex-encoded IV. Remember to never re-use an initialization vector. Always generate a new IV every time you encrypt.
+This method generates a 16-bit hex-encoded IV. **Remember to never re-use an initialization vector. Always generate a new IV every time you encrypt.**
 
 ```swift
 crypto.generateIv(callback: {(iv: String?, error: Error?) in
