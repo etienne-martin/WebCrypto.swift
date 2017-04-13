@@ -2,7 +2,7 @@
 
 The original [CryptoJS.swift](https://github.com/etienne-martin/CryptoJS.swift) library was developed in 2015 as I needed a way to share the same cryptography between a swift application and a web app. My goal was achieved by using the same javascript CryptoJS library in both environments. CryptoJS now suffers severe performance limitations over the newly launched WebCrypto API. 
 
-This new project will leverages the power of the WebCrypto API while keeping backwards compatiblity with CryptoJS.swift. All methods are asynchronous and run on a thread separated from the main application. 
+This new project leverages the power of the WebCrypto API while keeping backwards compatiblity with CryptoJS.swift. All methods are asynchronous and run on a thread separated from the main application. 
 
 ## Performance
 
