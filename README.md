@@ -77,7 +77,7 @@ crypto.decrypt(data: encrypted, key: key, iv: iv, callback: {(encrypted: Data?, 
 
 ## Encryption keys
 
-This function generates keys with lengths of 128, 192 or 256. If the length parameter is omitted, it will generate a 256 bits key by default.
+This function generates keys with lengths of 128, 192 or 256. If the length parameter is omitted, the ouput is a 256 bits key by default.
 
 ```swift
 crypto.generateKey(callback: {(key: String?, error: Error?) in
@@ -95,8 +95,7 @@ crypto.generateKey(length: 128, callback: {(key: String?, error: Error?) in
 
 ## Initialization vectors
 
-Outputs hex-encoded IV.  
-Remember to never re-use an initialization vectors. Always generate a new IV every time your encrypt.
+This method generates a 16 bits hex-encoded IV. Remember to never re-use an initialization vectors. Always generate a new IV every time your encrypt.
 
 ```swift
 crypto.generateIv(callback: {(iv: String?, error: Error?) in
@@ -142,22 +141,21 @@ crypto.sha512(data: input, callback: {(hash: String?, error: Error?) in
 * [Forge](https://github.com/digitalbazaar/forge) - Used for the openssl key derivation function
 * [SparkMD5](https://github.com/satazor/js-spark-md5) - Used for the openssl key derivation function
 
+
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.
+
+Update the README.md with details of changes to the plugin.
+
+Update the [examples](https://github.com/etienne-martin/CryptoJS.swift/blob/master/Crypto%20JS/ViewController.swift) by demonstrating the changes to the plugin.
+
+Build the project & test all the features before submitting your pull request.
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+* **Etienne Martin** - *Initial work* - [etiennemartin.ca](http://etiennemartin.ca/)
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
