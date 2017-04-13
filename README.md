@@ -4,10 +4,6 @@ The original [CryptoJS.swift](https://github.com/etienne-martin/CryptoJS.swift) 
 
 This project leverages the power of the new WebCrypto API while keeping backwards compatiblity with CryptoJS.swift. All methods are asynchronous and run on a thread separated from the main application. 
 
-## Performance
-
-Faster than.
-
 ## Usage 
 
 1. Drag and drop [WebCrypto.swift](http://adawd.cawd) and [WebCrypto.js](http://adawd.cawd) into your Xcode project.  
