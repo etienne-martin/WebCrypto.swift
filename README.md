@@ -169,9 +169,7 @@ crypto.sha512(data: input, callback: {(hash: String?, error: Error?) in
 
 When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.
 
-Update the README.md with details of changes to the plugin.
-
-Update the [examples](https://github.com/etienne-martin/CryptoJS.swift/blob/master/Crypto%20JS/ViewController.swift) by demonstrating the changes to the plugin.
+Update the README.md with details of changes to the library.
 
 Build the project & test all the features before submitting your pull request.
 
