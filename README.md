@@ -19,7 +19,7 @@ In comparison with other available solutions, here are the results obtained when
 ## Usage 
 
 1. Drag and drop [WebCrypto.swift](http://adawd.cawd) and [WebCrypto.js](http://adawd.cawd) into your Xcode project.  
-2. Initialize the WebCrypto class in your code.
+2. Initialize the WebCrypto class in your code:
 
 ```swift
 let crypto = WebCrypto()
@@ -73,7 +73,7 @@ crypto.decrypt(data: encrypted, password: password, callback: {(decrypted: Data?
 ```
 ### Key-based encryption
 
-Accepts hex-encoded key and IV.
+This method requires a key and an IV in hexadecimal format.
 
 ###### Encryption
 
@@ -116,7 +116,7 @@ crypto.generateKey(length: 128, callback: {(key: String?, error: Error?) in
 
 ## Initialization vectors
 
-This method generates a 16-bit hex-encoded IV. Remember to never re-use an initialization vectors. Always generate a new IV every time your encrypt.
+This method generates a 16-bit hex-encoded IV. Remember to never re-use an initialization vector. Always generate a new IV every time you encrypt.
 
 ```swift
 crypto.generateIv(callback: {(iv: String?, error: Error?) in
