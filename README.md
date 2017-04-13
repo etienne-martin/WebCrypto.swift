@@ -7,8 +7,23 @@ These instructions will get you a copy of the project up and running on your loc
 
 ## Usage 
 
+Drag and drop [WebCrypto.swift](http://adawd.cawd) and [WebCrypto.js](http://adawd.cawd) into your Xcode project. 
+
 ```swift
 let crypto = WebCrypto()
+```
+#### Data types conversion
+
+Convert string to data:
+
+```swift
+let data = Data("This is a string".utf8)
+```
+
+Convert data to string:
+
+```swift
+let string = String(data: data, encoding: .utf8)
 ```
 
 ## AES
@@ -62,7 +77,7 @@ crypto.decrypt(data: encrypted, key: key, iv: iv, callback: {(encrypted: Data?, 
 
 ## Encryption keys
 
-This function generates keys with lengths of 128, 192 or 256. If the length parameter is omited, it will generate a 256 bits key by default.
+This function generates keys with lengths of 128, 192 or 256. If the length parameter is omitted, it will generate a 256 bits key by default.
 
 ```swift
 crypto.generateKey(callback: {(key: String?, error: Error?) in
@@ -81,7 +96,7 @@ crypto.generateKey(length: 128, callback: {(key: String?, error: Error?) in
 ## Initialization vectors
 
 Outputs hex-encoded IV.  
-Remember to never re-use an initialization vectors. Always generate a new IV every time your encrypt!
+Remember to never re-use an initialization vectors. Always generate a new IV every time your encrypt.
 
 ```swift
 crypto.generateIv(callback: {(iv: String?, error: Error?) in
@@ -91,7 +106,7 @@ crypto.generateIv(callback: {(iv: String?, error: Error?) in
 
 ## Cryptographically secure number generator
 
-Hexadecial string
+Hexadecial string. This method lets you get cryptographically strong random values.
 
 ```swift
 crypto.generateRandomNumber(length: 16, callback: {(number: String?, error: Error?) in
@@ -123,9 +138,9 @@ crypto.sha512(data: input, callback: {(hash: String?, error: Error?) in
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* [WebCryptoAPI](https://www.w3.org/TR/WebCryptoAPI/) - JavaScript API for performing basic cryptographic operations 
+* [Forge](https://github.com/digitalbazaar/forge) - Used for the openssl key derivation function
+* [SparkMD5](https://github.com/satazor/js-spark-md5) - Used for the openssl key derivation function
 
 ## Contributing
 
