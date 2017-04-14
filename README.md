@@ -6,7 +6,7 @@ A small collection of cryptographic functions based on the JavaScript WebCrypto 
 
 The original [CryptoJS.swift](https://github.com/etienne-martin/CryptoJS.swift) library was developed in 2015 as I needed a way to share the same cryptography between a Swift application and a web app. My goal was achieved by using the same JavaScript [CryptoJS library](https://github.com/brix/crypto-js) in both environments. CryptoJS is no longer maintained and  suffers severe performance limitations over the new [WebCrypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API). 
 
-This project leverages the power of the WebCrypto API while keeping backwards compatiblity with CryptoJS.swift. All methods are asynchronous and run on a separate thread. 
+This project leverages the power of the WebCrypto API while keeping backwards compatibility with CryptoJS.swift. All methods are asynchronous and run on a separate thread. 
 
 ## Performance
 
@@ -45,13 +45,13 @@ let string = String(data: data, encoding: .utf8)
 
 ## AES
 
-The algorithm used by WebCrypto.swift is the cipher-block chaining (CBC) mode. For key generation, it uses PKCS7 as the padding method.
+The algorithm used by WebCrypto.swift is the cipher-block chaining ([CBC](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Cipher_Block_Chaining_.28CBC.29)) mode. For key generation, it uses [PKCS7](https://en.wikipedia.org/wiki/PKCS) as the padding method.
 
 ### Password-based encryption
 
 WebCrypto.swift uses a salted key derivation algorithm. The salt is a piece of random bytes which are generated when encrypting, and stored in the file header; upon decryption, the salt is retrieved from the header, and the key and IV are recomputed from the provided password and the salt value.
 
-The key derivation algorithm is the same as the one used by openSSL, making it compatible with openSSL and other libraries like CryptoJS.
+The key derivation algorithm is the same as the one used by [openSSL](https://en.wikipedia.org/wiki/OpenSSL), making it compatible with openSSL and other libraries like CryptoJS.
 
 ###### Encryption
 
@@ -169,11 +169,11 @@ crypto.sha512(data: input, callback: {(hash: String?, error: Error?) in
 
 When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.
 
-Update the README.md with details of changes to the library.
+Update the [README.md](https://github.com/etienne-martin/WebCrypto.swift) with details of changes to the library.
 
 Update the [examples](https://github.com/etienne-martin/WebCrypto.swift/blob/master/WebCrypto/AppDelegate.swift) by demonstrating the changes to the library.
 
-Build the project & test all the features before submitting your pull request.
+Build the project and test all the features before submitting your pull request.
 
 ## Authors
 
