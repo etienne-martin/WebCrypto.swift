@@ -1,10 +1,10 @@
 # WebCrypto.swift
 
-A small collection of cryptographic functions based on the javascript WebCrypto API. Allows you to share the same crypto between a native iOS/OSX application and a web application.
+A small collection of cryptographic functions based on the JavaScript WebCrypto API. Allows you to share the same crypto between a native iOS/OSX application and a web application.
 
 ### The story
 
-The original [CryptoJS.swift](https://github.com/etienne-martin/CryptoJS.swift) library was developed in 2015 as I needed a way to share the same cryptography between a swift application and a web app. My goal was achieved by using the same javascript [CryptoJS library](https://github.com/brix/crypto-js) in both environments. CryptoJS is no longer maintained and  suffers severe performance limitations over the new [WebCrypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API). 
+The original [CryptoJS.swift](https://github.com/etienne-martin/CryptoJS.swift) library was developed in 2015 as I needed a way to share the same cryptography between a Swift application and a web app. My goal was achieved by using the same JavaScript [CryptoJS library](https://github.com/brix/crypto-js) in both environments. CryptoJS is no longer maintained and  suffers severe performance limitations over the new [WebCrypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API). 
 
 This project leverages the power of the WebCrypto API while keeping backwards compatiblity with CryptoJS.swift. All methods are asynchronous and run on a separate thread. 
 
@@ -29,7 +29,7 @@ let crypto = WebCrypto()
 
 #### Data types conversion
 
-WebCrypto.swift works with swift's data object. If you need to pass a string to a method, you first need to convert it to data before passing it as an input. 
+WebCrypto.swift works with Swift's data object. If you need to pass a string to a method, you first need to convert it to data before passing it as an input. 
 
 Convert string to data:
 
