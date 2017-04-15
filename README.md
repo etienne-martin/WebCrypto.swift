@@ -126,7 +126,7 @@ crypto.generateIv(callback: {(iv: String?, error: Error?) in
 
 ## Cryptographically secure number generator
 
-This method lets you get cryptographically strong random values. The output is a hex-encoded string.
+This method lets you get cryptographically strong random values. The output is a hex-encoded string. **Do not generate keys using this method.** Use the [generateKey](https://github.com/etienne-martin/WebCrypto.swift/blob/master/README.md#encryption-keys) method instead.
 
 ```swift
 crypto.generateRandomNumber(length: 16, callback: {(number: String?, error: Error?) in
