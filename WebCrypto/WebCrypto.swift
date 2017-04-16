@@ -1,10 +1,28 @@
-//
-//  WebCrypto.swift
-//  WebCrypto
-//
-//  Created by emartin on 2017-04-13.
-//  Copyright © 2017 etiennemartin.ca. All rights reserved.
-//
+/*
+
+MIT License
+
+Copyright (c) 2017 Etienne Martin
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+*/
 
 import WebKit
 
@@ -24,7 +42,13 @@ private func loadJsFile( _ filename: String) -> String? {
 open class WebCrypto: NSObject, WKScriptMessageHandler{
     
     public enum Error: Swift.Error {
-        /// Unknown
+        // JavaScript exception
+        case javaScriptException
+        // Invalid key length
+        case invalidKeyLength
+        // Invalid IV length
+        case invalidIvLength
+        // Unknown
         case unknown
     }
     
@@ -33,13 +57,15 @@ open class WebCrypto: NSObject, WKScriptMessageHandler{
     var dataCallbacks: [String : (Data?, WebCrypto.Error?) -> ()] = [:]
     var stringCallbacks: [String : (String?, WebCrypto.Error?) -> ()] = [:]
     
-    private func registerDataCallback( _ callback: @escaping (Data?, WebCrypto.Error?) -> ()){
+    private func registerDataCallback( _ callback: @escaping (Data?, WebCrypto.Error?) -> ()) -> Int {
         callbackIndex += 1
         dataCallbacks["\(callbackIndex)"] = callback
+        return callbackIndex
     }
-    private func registerStringCallback( _ callback: @escaping (String?, WebCrypto.Error?) -> ()){
+    private func registerStringCallback( _ callback: @escaping (String?, WebCrypto.Error?) -> ()) -> Int {
         callbackIndex += 1
         stringCallbacks["\(callbackIndex)"] = callback
+        return callbackIndex
     }
     
     override init(){
@@ -62,8 +88,7 @@ open class WebCrypto: NSObject, WKScriptMessageHandler{
                     print(errorMessage)
                 }else{
                     self.webView.configuration.userContentController.add(self, name: "scriptHandler")
-                    
-                    self.webView.evaluateJavaScript("init()") { (result, error) in
+                    self.webView.evaluateJavaScript("initWebCrypto()") { (result, error) in
                         if let errorMessage = error {
                             print(errorMessage)
                         }
@@ -71,7 +96,8 @@ open class WebCrypto: NSObject, WKScriptMessageHandler{
                 }
             })
         }else{
-            print("fail")
+            // WebCrypto.js couldn't be found
+            print("Unable to load WebCrypto.js")
         }
     }
     
@@ -93,8 +119,15 @@ open class WebCrypto: NSObject, WKScriptMessageHandler{
                     // Deregister the callback
                     dataCallbacks["\(index)"] = nil
                     
-                    if error != nil {
-                        callback(nil, Error.unknown)
+                    if let errorCode = error {
+                        switch("\(errorCode)"){
+                        case "invalidKeyLength":
+                            callback(nil, Error.invalidKeyLength)
+                        case "invalidIvLength":
+                            callback(nil, Error.invalidIvLength)
+                        default:
+                            callback(nil, Error.unknown)
+                        }
                         return;
                     }
                 
@@ -102,7 +135,7 @@ open class WebCrypto: NSObject, WKScriptMessageHandler{
                         if let data = Data(base64Encoded: "\(unwrappedResult)", options: .ignoreUnknownCharacters) {
                             callback(data, nil)
                         }else{
-                            print("Unable to decode the data")
+                            // Unable to decode the base64 data
                             callback(nil, Error.unknown)
                         }
                     }
@@ -114,22 +147,23 @@ open class WebCrypto: NSObject, WKScriptMessageHandler{
                     // Deregister the callback
                     stringCallbacks["\(index)"] = nil
                     
-                    if error != nil {
-                        callback(nil, Error.unknown)
+                    if let errorCode = error {
+                        switch("\(errorCode)"){
+                            case "invalidKeyLength":
+                                callback(nil, Error.invalidKeyLength)
+                            case "invalidIvLength":
+                                callback(nil, Error.invalidIvLength)
+                            default:
+                                callback(nil, Error.unknown)
+                        }
                         return;
                     }
                     
-                    if let unwrappedResult = result {
-                        if let data = Data(base64Encoded: "\(unwrappedResult)", options: .ignoreUnknownCharacters) {
-                            
-                            if let hash = String(data: data, encoding: .utf8) {
-                                callback(hash, nil)
-                            }
-                            
-                        }else{
-                            print("Unable to decode the data")
-                            callback(nil, Error.unknown)
-                        }
+                    if let string = result {
+                        callback("\(string)", nil)
+                    }else{
+                        // The result is empty
+                        callback(nil, Error.unknown)
                     }
                 
                 default: break
@@ -155,49 +189,53 @@ open class WebCrypto: NSObject, WKScriptMessageHandler{
     private func aes(action: String, data: Data, password: String?, key: String?, iv: String?, callback: @escaping (Data?, WebCrypto.Error?) -> ()){
         
         let base64Data = data.base64EncodedString(options: [])
-        
-        registerDataCallback(callback)
-        
+        let index = registerDataCallback(callback)
         var secret = ""
         
         if let unwrappedPassword = password {
             secret = "password: '\(unwrappedPassword)'"
-        }
-        
-        if let unwrappedKey = key {
+        }else if let unwrappedKey = key {
             secret = "key: '\(unwrappedKey)', iv: '\(iv!)'"
         }
         
-        webView.evaluateJavaScript("WebCrypto.\(action)({data: '\(base64Data)', \(secret), callback: \(callbackIndex)})") { (result, error) in
-            if let errorMessage = error {
-                print(errorMessage)
+        webView.evaluateJavaScript("WebCrypto.\(action)({data: '\(base64Data)', \(secret), callback: \(index)})") { (result, error) in
+            if error != nil {
+                // Deregister the callback
+                self.dataCallbacks["\(index)"] = nil
+                callback(nil, Error.javaScriptException)
             }
         }
     }
     
     open func generateRandomNumber(length:Int, callback: @escaping (String?, WebCrypto.Error?) -> ()){
-        registerStringCallback(callback)
-        webView.evaluateJavaScript("WebCrypto.generateRandomNumber({length: \(length), callback: \(callbackIndex)})") { (result, error) in
-            if let errorMessage = error {
-                print(errorMessage)
+        let index = registerStringCallback(callback)
+        webView.evaluateJavaScript("WebCrypto.generateRandomNumber({length: \(length), callback: \(index)})") { (result, error) in
+            if error != nil {
+                // Deregister the callback
+                self.stringCallbacks["\(index)"] = nil
+                callback(nil, Error.javaScriptException)
             }
         }
     }
     
     open func generateKey(length:Int = 256, callback: @escaping (String?, WebCrypto.Error?) -> ()){
-        registerStringCallback(callback)
-        webView.evaluateJavaScript("WebCrypto.generateKey({length: \(length), callback: \(callbackIndex)})") { (result, error) in
-            if let errorMessage = error {
-                print(errorMessage)
+        let index = registerStringCallback(callback)
+        webView.evaluateJavaScript("WebCrypto.generateKey({length: \(length), callback: \(index)})") { (result, error) in
+            if error != nil {
+                // Deregister the callback
+                self.stringCallbacks["\(index)"] = nil
+                callback(nil, Error.javaScriptException)
             }
         }
     }
     
     open func generateIv(callback: @escaping (String?, WebCrypto.Error?) -> ()){
-        registerStringCallback(callback)
-        webView.evaluateJavaScript("WebCrypto.generateIv({callback: \(callbackIndex)})") { (result, error) in
-            if let errorMessage = error {
-                print(errorMessage)
+        let index = registerStringCallback(callback)
+        webView.evaluateJavaScript("WebCrypto.generateIv({callback: \(index)})") { (result, error) in
+            if error != nil {
+                // Deregister the callback
+                self.stringCallbacks["\(index)"] = nil
+                callback(nil, Error.javaScriptException)
             }
         }
     }
@@ -218,35 +256,32 @@ open class WebCrypto: NSObject, WKScriptMessageHandler{
     }
     
     private func hash(data: Data, algorithm: String, callback: @escaping (String?, WebCrypto.Error?) -> ()){
-        
         let base64Data = data.base64EncodedString(options: [])
-        
-        registerStringCallback(callback)
-        
-        webView.evaluateJavaScript("WebCrypto.hash({data: '\(base64Data)', algorithm: '\(algorithm)', callback: \(callbackIndex)})") { (result, error) in
-            if let errorMessage = error {
-                print(errorMessage)
+        let index = registerStringCallback(callback)
+        webView.evaluateJavaScript("WebCrypto.hash({data: '\(base64Data)', algorithm: '\(algorithm)', callback: \(index)})") { (result, error) in
+            if error != nil {
+                // Deregister the callback
+                self.stringCallbacks["\(index)"] = nil
+                callback(nil, Error.javaScriptException)
             }
         }
     }
 }
 
-private extension WKWebView {
-    func evaluate(script: String, completion: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void) {
+private extension WKWebView{
+    func evaluate(script: String, completion: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void){
         var finished = false
-        
-        evaluateJavaScript(script) { (result, error) in
+        evaluateJavaScript(script){( result, error ) in
             if error == nil {
                 if result != nil {
                     completion(result as AnyObject?, nil)
                 }
-            } else {
+            }else{
                 completion(nil, error as NSError?)
             }
             finished = true
         }
-        
-        while !finished {
+        while !finished{
             RunLoop.current.run(mode: .defaultRunLoopMode, before: Date.distantFuture)
         }
     }

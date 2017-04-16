@@ -1,14 +1,32 @@
-//
-//  WebCrypto.js
-//  WebCrypto
-//
-//  Created by emartin on 2017-04-13.
-//  Copyright © 2017 etiennemartin.ca. All rights reserved.
-//
+/*
+
+MIT License
+
+Copyright (c) 2017 Etienne Martin
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+*/
 
 "use strict";
 
-function init(){
+function initWebCrypto(){
 	
 // Stripped-down version of SparkMD5, keeping only the hashBinary function
 // https://github.com/satazor/js-spark-md5
@@ -233,7 +251,7 @@ function hashBinary(content, raw) {
     return raw ? hexToBinaryString(ret) : ret;
 }
 
-// Open ssl key derivation functions extracted from forge
+// OpenSSL key derivation functions extracted from forge
 // https://github.com/digitalbazaar/forge
 
 function opensslDeriveBytes(password, salt, dkLen){	
@@ -374,7 +392,7 @@ function generateKey(params){
     var callback = params.callback;
     
     if( length !== 128 && length !== 192 && length !== 256 ){
-        postMessage({error: "Error: Invalid key length provided.", callback:callback, func: "string"});
+        postMessage({error: "invalidKeyLength", callback:callback, func: "string"});
         return false;
     }
     
@@ -389,7 +407,7 @@ function generateKey(params){
             "raw", //can be "jwk" or "raw"
             key //extractable must be true
         ).then(function(keydata){
-            var key = utf8ToBase64(a2hex(new Uint8Array(keydata)));
+            var key = a2hex(new Uint8Array(keydata));
             postMessage({result: key, callback: callback, func: "string"});
         }).catch(function(error){
             postMessage({error:error, callback:callback, func: "string"});
@@ -401,14 +419,14 @@ function generateKey(params){
     
 function generateIv(params){
     var callback = params.callback;
-    var iv = utf8ToBase64(a2hex(window.crypto.getRandomValues(new Uint8Array(16))));
+    var iv = a2hex(window.crypto.getRandomValues(new Uint8Array(16)));
     postMessage({result: iv, callback: callback, func: "string"});
 }
     
 function generateRandomNumber(params){
     var length = params.length;
     var callback = params.callback;
-    var randomNumber = utf8ToBase64(a2hex(window.crypto.getRandomValues(new Uint8Array(length))));
+    var randomNumber = a2hex(window.crypto.getRandomValues(new Uint8Array(length)));
     postMessage({result: randomNumber, callback: callback, func: "string"});
 }
     
@@ -431,6 +449,14 @@ function encrypt(params){
 	}else if( key && IV ){
 		key = convertStringToArrayBufferView(hex2a(key));
 	    IV = convertStringToArrayBufferView(hex2a(IV));
+        
+        if( params.key.length !== 32 && params.key.length !== 48 && params.key.length !== 64 ){
+            postMessage({error: "invalidKeyLength", callback:callback, func: "data"});
+            return false;
+        }else if( params.iv.length !== 32 ){
+            postMessage({error: "invalidIvLength", callback:callback, func: "data"});
+            return false;
+        }
 	}
     
     cryptoSubtle.importKey("raw", key, {name: "AES-CBC"}, false, ["encrypt", "decrypt"]).then(function(cryptokey){
@@ -455,9 +481,9 @@ function encrypt(params){
             encryptedData = btoa(encryptedData);
             
             /*
-            // Add new line every 64 chars to ensute compatibility with openssl
+            // Add new line every 64 chars to ensure compatibility with openssl
             encryptedData = encryptedData.replace(/(.{64})/g, "$1\n");
-            // Trim new lines and then end the file with a new line to ensute compatibility with openssl
+            // Trim new lines and then end the file with a new line to ensure compatibility with openssl
             encryptedData = encryptedData.replace(/^\s+|\s+$/g, '')+"\n\n";
             */
              
@@ -497,6 +523,15 @@ function decrypt(params){
 	}else if( key && IV ){
 		key = convertStringToArrayBufferView(hex2a(key));
 	    IV = convertStringToArrayBufferView(hex2a(IV));
+        
+        if( params.key.length !== 32 && params.key.length !== 48 && params.key.length !== 64 ){
+            postMessage({error: "invalidKeyLength", callback:callback, func: "data"});
+            return false;
+            
+        }else if( params.iv.length !== 32 ){
+            postMessage({error: "invalidIvLength", callback:callback, func: "data"});
+            return false;
+        }
 	}
     
     cryptoSubtle.importKey("raw", key, {name: "AES-CBC"}, false, ["encrypt", "decrypt"]).then(function(cryptokey){
@@ -511,7 +546,7 @@ function decrypt(params){
         });
 
     }).catch(function(error){
-        postMessage({result: error, callback: callback, func: "data"});
+        postMessage({error: error, callback: callback, func: "data"});
     });
     
 }
@@ -525,10 +560,10 @@ function hash(params){
     var callback = params.callback;
         
     cryptoSubtle.digest({ name: algorithm, }, data).then(function(hash){
-        var hash = utf8ToBase64(a2hex(new Uint8Array(hash)));
+        var hash = a2hex(new Uint8Array(hash));
         postMessage({result: hash, callback: callback, func: "string"});
     }).catch(function(error){
-        postMessage({result: error, callback: callback, func: "string"});
+        postMessage({error: error, callback: callback, func: "string"});
     });
 }
     
