@@ -73,7 +73,7 @@ crypto.decrypt(data: encrypted, password: password, callback: {(decrypted: Data?
 ```
 ### Key-based encryption
 
-This method requires a key and an IV in hexadecimal format. Use the [generateKey](https://github.com/etienne-martin/WebCrypto.swift/blob/master/README.md#encryption-keys) and [generateIv](https://github.com/etienne-martin/WebCrypto.swift#initialization-vectors) methods if you need to generate a new key and IV. **Remember to never re-use an initialization vector. Always generate a new IV every time you encrypt.**
+This method requires a key and an IV in hexadecimal format. Use the [generateKey](https://github.com/etienne-martin/WebCrypto.swift#encryption-keys) and [generateIv](https://github.com/etienne-martin/WebCrypto.swift#initialization-vectors) methods if you need to generate a new key and IV. **Remember to never re-use an initialization vector. Always generate a new IV every time you encrypt.**
 
 ###### Encryption
 
@@ -126,7 +126,7 @@ crypto.generateIv(callback: {(iv: String?, error: Error?) in
 
 ## Cryptographically secure number generator
 
-This method lets you get cryptographically strong random values. The output is a hex-encoded string.
+This method lets you get cryptographically strong random values. The output is a hex-encoded string. **Do not generate keys using this method.** Use the [generateKey](https://github.com/etienne-martin/WebCrypto.swift#encryption-keys) method instead.
 
 ```swift
 crypto.generateRandomNumber(length: 16, callback: {(number: String?, error: Error?) in
