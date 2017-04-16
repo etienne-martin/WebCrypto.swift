@@ -47,6 +47,8 @@ let string = String(data: data, encoding: .utf8)
 
 The algorithm used by WebCrypto.swift is the cipher-block chaining ([CBC](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Cipher_Block_Chaining_.28CBC.29)) mode. For key generation, it uses [PKCS7](https://en.wikipedia.org/wiki/PKCS) as the padding method.
 
+WebCrypto.swift supports AES-128, AES-192, and AES-256. It will pick the variant by the size of the key you pass in. If you use a password, the variant used will be AES-256.
+
 ### Password-based encryption
 
 WebCrypto.swift uses a salted key derivation algorithm. The salt is a piece of random bytes which are generated when encrypting, and stored in the file header; upon decryption, the salt is retrieved from the header, and the key and IV are recomputed from the provided password and the salt value.
