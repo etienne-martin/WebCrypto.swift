@@ -44,6 +44,8 @@ open class WebCrypto: NSObject, WKScriptMessageHandler{
     public enum Error: Swift.Error {
         // JavaScript exception
         case javaScriptException
+        // Invalid password length
+        case invalidPasswordLength
         // Invalid key length
         case invalidKeyLength
         // Invalid IV length
@@ -66,6 +68,21 @@ open class WebCrypto: NSObject, WKScriptMessageHandler{
         callbackIndex += 1
         stringCallbacks["\(callbackIndex)"] = callback
         return callbackIndex
+    }
+    
+    private func convertErrorCode( _ errorCode: String) -> Error {
+        switch(errorCode){
+            case "javaScriptException":
+                return Error.javaScriptException
+            case "invalidPasswordLength":
+                return Error.invalidPasswordLength
+            case "invalidKeyLength":
+                return Error.invalidKeyLength
+            case "invalidIvLength":
+                return Error.invalidIvLength
+            default:
+                return Error.unknown
+        }
     }
     
     override init(){
@@ -120,14 +137,7 @@ open class WebCrypto: NSObject, WKScriptMessageHandler{
                     dataCallbacks["\(index)"] = nil
                     
                     if let errorCode = error {
-                        switch("\(errorCode)"){
-                        case "invalidKeyLength":
-                            callback(nil, Error.invalidKeyLength)
-                        case "invalidIvLength":
-                            callback(nil, Error.invalidIvLength)
-                        default:
-                            callback(nil, Error.unknown)
-                        }
+                        callback(nil, convertErrorCode("\(errorCode)"))
                         return;
                     }
                 
@@ -148,14 +158,7 @@ open class WebCrypto: NSObject, WKScriptMessageHandler{
                     stringCallbacks["\(index)"] = nil
                     
                     if let errorCode = error {
-                        switch("\(errorCode)"){
-                            case "invalidKeyLength":
-                                callback(nil, Error.invalidKeyLength)
-                            case "invalidIvLength":
-                                callback(nil, Error.invalidIvLength)
-                            default:
-                                callback(nil, Error.unknown)
-                        }
+                        callback(nil, convertErrorCode("\(errorCode)"))
                         return;
                     }
                     

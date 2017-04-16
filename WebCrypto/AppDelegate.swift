@@ -42,7 +42,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         crypto.encrypt(data: stringSample, password: password, callback: {(encrypted: Data?, error: Error?) in
             crypto.decrypt(data: encrypted!, password: password, callback: {(decrypted: Data?, error: Error?) in
                 if decrypted! == stringSample {
-                    print("String successfully encrypted & decrypted (Password-based)")
+                    print("Password-based encryption: success")
                 }else{
                     print("Fail")
                 }
@@ -55,7 +55,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         crypto.encrypt(data: stringSample, key: key, iv: iv, callback: {(encrypted: Data?, error: Error?) in
             crypto.decrypt(data: encrypted!, key: key, iv: iv, callback: {(decrypted: Data?, error: Error?) in
                 if decrypted! == stringSample {
-                    print("String successfully encrypted & decrypted (Key-based)")
+                    print("Key-based encryption: success")
                 }else{
                     print("Fail")
                 }
@@ -63,76 +63,62 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         })
         
         /*
-         
-         // AES file encryption
-         
-         crypto.generateKey(callback: {(key: String?, error: Error?) in
-         print("Key:", key!)
-         
-         do{
-         // Load file from disk
-         let sampleFileData = try Data(contentsOf: URL(string: "file:///var/tmp")!.appendingPathComponent("test10Mb.db"))
-         
-         let start = Date().timestamp()
-         
-         crypto.encrypt(data: sampleFileData, password: password, callback: {(encrypted: Data?, error: Error?) in
-         
-         print(Date().timestamp()-start)
-         
-         crypto.decrypt(data: encrypted!, password: password, callback: {(decrypted: Data?, error: Error?) in
-         
-         if decrypted! == sampleFileData {
-         print("File successfully encrypted & decrypted")
-         }else{
-         print("Fail")
-         }
-         })
-         })
-         }catch(let error){
-         print(error)
-         }
-         
-         })
-         
-         */
+        
+        // AES file encryption
+
+        do{
+            // Load file from disk
+            let sampleFileData = try Data(contentsOf: URL(string: "file:///var/tmp")!.appendingPathComponent("test10Mb.db"))
+
+            let start = Date().timestamp()
+
+            crypto.encrypt(data: sampleFileData, password: password, callback: {(encrypted: Data?, error: Error?) in
+
+                print(Date().timestamp()-start)
+
+                crypto.decrypt(data: encrypted!, password: password, callback: {(decrypted: Data?, error: Error?) in
+                    if decrypted! == sampleFileData {
+                        print("File successfully encrypted & decrypted")
+                    }else{
+                        print("Fail")
+                    }
+                })
+            })
+        }catch(let error){
+            print(error)
+        }
+ 
+        */
         
         // Hashing functions
         
         crypto.sha1(data: stringSample, callback: {(hash: String?, error: Error?) in
-            print("SHA1:", hash!)
-            
             if( hash! == "fe2aa35f4fcb32ae2245b48d8bd814eb261a977c" ){
-                print("SHA1 success")
+                print("SHA1: success")
             }else{
                 print("Fail")
             }
         })
         
         crypto.sha256(data: stringSample, callback: {(hash: String?, error: Error?) in
-            print("SHA256:", hash!)
-            
             if( hash! == "0427da5c514a96f4121ca458ea805d20c3f89c84a025ec8c35a5ff6af26cdce9" ){
-                print("SHA256 success")
+                print("SHA256: success")
             }else{
                 print("Fail")
             }
         })
         
         crypto.sha384(data: stringSample, callback: {(hash: String?, error: Error?) in
-            print("SHA384:", hash!)
-            
             if( hash! == "de7c12a48cddba478cb5225266a555565332d2e0aa954023467118644f5ebab0264962c8138a9597794db02e48c9928e" ){
-                print("SHA384 success")
+                print("SHA384: success")
             }else{
                 print("Fail")
             }
         })
         
         crypto.sha512(data: stringSample, callback: {(hash: String?, error: Error?) in
-            print("SHA512:", hash!)
-            
             if( hash! == "72cfbd33938d7671ea1c91598d8592b76f0c3b94185baf951d651a56b75ceec8a9d6563a1614c5524538ead6fa1d52b24c726a8ca16300767bc2f71fa8325ddb" ){
-                print("SHA512 success")
+                print("SHA512: success")
             }else{
                 print("Fail")
             }

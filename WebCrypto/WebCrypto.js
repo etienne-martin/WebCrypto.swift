@@ -381,6 +381,9 @@ function base64ToUtf8(str){
 function utf8ToBase64(str){
     return window.btoa(unescape(encodeURIComponent(str)));
 }
+function isDefined(variable){
+    return typeof variable !== "undefined";
+}
 
 // AES functions
     
@@ -440,13 +443,20 @@ function encrypt(params){
 	
 	var plaintextData = convertStringToArrayBufferView(data);
     
-    if( password ){
+    if( isDefined(password) ){
+        
+        if( password.length === 0 ){
+            postMessage({error: "invalidPasswordLength", callback:callback, func: "data"});
+            return false;
+        }
+        
 		var derivedPassword = derivePassword(password);
 		var key = convertStringToArrayBufferView(derivedPassword.key);
 	    var IV = convertStringToArrayBufferView(derivedPassword.iv);
 		var salt = derivedPassword.salt;
 	
-	}else if( key && IV ){
+	}else if( isDefined(key) && isDefined(IV) ){
+        
 		key = convertStringToArrayBufferView(hex2a(key));
 	    IV = convertStringToArrayBufferView(hex2a(IV));
         
@@ -515,12 +525,19 @@ function decrypt(params){
     	encryptedData = convertStringToArrayBufferView(data.substr(16,data.length));
 	}
 	
-	if( password ){
+    if( isDefined(password) ){
+        
+        if( password.length === 0 ){
+            postMessage({error: "invalidPasswordLength", callback:callback, func: "data"});
+            return false;
+        }
+        
 		var derivedPassword = derivePassword(password, salt);
 		var key = convertStringToArrayBufferView(derivedPassword.key);
 	    var IV = convertStringToArrayBufferView(derivedPassword.iv);
 	
-	}else if( key && IV ){
+	}else if( isDefined(key) && isDefined(IV) ){
+        
 		key = convertStringToArrayBufferView(hex2a(key));
 	    IV = convertStringToArrayBufferView(hex2a(IV));
         
