@@ -11,10 +11,11 @@ This project leverages the power of the WebCrypto API while keeping backwards co
 ## Performance
 
 In comparison with other available solutions, here are the results obtained when encrypting a 10MB file with AES-256 on a 2.6 GHz Intel Core i7.
- 
-**WebCrypto.swift:** 1545ms  
+  
+**RNCryptor**        92ms  
+**openSSL:**         139ms   
+**WebCrypto.swift:** 1545ms   
 **CryptoSwift:**     24366ms  
-**openSSL:**         139ms
 
 ## Usage 
 
@@ -25,7 +26,7 @@ In comparison with other available solutions, here are the results obtained when
 let crypto = WebCrypto()
 ```
 
-3. That's it.
+3. That's it. No bridging header required.
 
 #### Data types conversion
 
