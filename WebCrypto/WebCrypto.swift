@@ -210,17 +210,6 @@ open class WebCrypto: NSObject, WKScriptMessageHandler{
         }
     }
     
-    open func generateRandomNumber(length:Int, callback: @escaping (String?, WebCrypto.Error?) -> ()){
-        let index = registerStringCallback(callback)
-        webView.evaluateJavaScript("WebCrypto.generateRandomNumber({length: \(length), callback: \(index)})") { (result, error) in
-            if error != nil {
-                // Deregister the callback
-                self.stringCallbacks["\(index)"] = nil
-                callback(nil, Error.javaScriptException)
-            }
-        }
-    }
-    
     open func generateKey(length:Int = 256, callback: @escaping (String?, WebCrypto.Error?) -> ()){
         let index = registerStringCallback(callback)
         webView.evaluateJavaScript("WebCrypto.generateKey({length: \(length), callback: \(index)})") { (result, error) in
@@ -231,16 +220,18 @@ open class WebCrypto: NSObject, WKScriptMessageHandler{
             }
         }
     }
-    
-    open func generateIv(callback: @escaping (String?, WebCrypto.Error?) -> ()){
+    open func generateRandomNumber(length:Int, callback: @escaping (String?, WebCrypto.Error?) -> ()){
         let index = registerStringCallback(callback)
-        webView.evaluateJavaScript("WebCrypto.generateIv({callback: \(index)})") { (result, error) in
+        webView.evaluateJavaScript("WebCrypto.generateRandomNumber({length: \(length), callback: \(index)})") { (result, error) in
             if error != nil {
                 // Deregister the callback
                 self.stringCallbacks["\(index)"] = nil
                 callback(nil, Error.javaScriptException)
             }
         }
+    }
+    open func generateIv(callback: @escaping (String?, WebCrypto.Error?) -> ()){
+        generateRandomNumber(length: 16, callback: callback)
     }
     
     // [ Hashing functions ]

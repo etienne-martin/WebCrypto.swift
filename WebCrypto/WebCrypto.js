@@ -378,6 +378,7 @@ function base64ToUtf8(str){
     str = str.replace(/\s/g, '');
     return decodeURIComponent(encodeURIComponent(window.atob(str)));
 }
+// The following function is unused.
 function utf8ToBase64(str){
     return window.btoa(unescape(encodeURIComponent(str)));
 }
@@ -418,12 +419,6 @@ function generateKey(params){
     }).catch(function(error){
         postMessage({error:error, callback:callback, func: "string"});
     });
-}
-    
-function generateIv(params){
-    var callback = params.callback;
-    var iv = a2hex(window.crypto.getRandomValues(new Uint8Array(16)));
-    postMessage({result: iv, callback: callback, func: "string"});
 }
     
 function generateRandomNumber(params){
@@ -506,7 +501,6 @@ function encrypt(params){
     }).catch(function(error){
         postMessage({error:error, callback:callback, func: "data"});
     });
-
 }
 
 function decrypt(params){
@@ -565,7 +559,6 @@ function decrypt(params){
     }).catch(function(error){
         postMessage({error: error, callback: callback, func: "data"});
     });
-    
 }
     
 // Hashing functions
@@ -588,7 +581,6 @@ function hash(params){
 
 window.WebCrypto = {
     generateKey: generateKey,
-    generateIv: generateIv,
     generateRandomNumber: generateRandomNumber,
     encrypt: encrypt,
     decrypt: decrypt,
