@@ -128,7 +128,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         let dataKey = Data(bytes: [0, 1, 127, 128, 255, 0, 1, 127, 128, 255, 0, 1, 127, 128, 255, 3])
         
-        if dataKey == crypto.dataFromHexEncodedString(crypto.hexEncodedString(dataKey)) {
+        if dataKey == crypto.dataFromHexEncodedString(crypto.hexEncodedStringFromData(dataKey)) {
             print("Hexadecimal data conversion: success")
         }
         

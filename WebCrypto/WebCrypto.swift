@@ -263,7 +263,7 @@ open class WebCrypto: NSObject, WKScriptMessageHandler{
     
     // Data conversion functions (Helpers)
     
-    open func hexEncodedString( _ data:Data) -> String {
+    open func hexEncodedStringFromData( _ data:Data) -> String {
         return data.map { String(format: "%02hhx", $0) }.joined()
     }
     
