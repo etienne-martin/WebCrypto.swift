@@ -124,6 +124,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         })
         
+        // Data conversion
+        
+        let dataKey = Data(bytes: [0, 1, 127, 128, 255, 0, 1, 127, 128, 255, 0, 1, 127, 128, 255, 3])
+        
+        if dataKey == crypto.dataFromHexEncodedString(crypto.hexEncodedString(dataKey)) {
+            print("Hexadecimal data conversion: success")
+        }
+        
     }
     
     func applicationWillTerminate(_ aNotification: Notification) {
