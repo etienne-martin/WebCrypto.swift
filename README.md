@@ -44,6 +44,18 @@ Convert data to string:
 let string = String(data: data, encoding: .utf8)
 ```
 
+Convert data to hex encoded string:
+
+```swift
+let hex = crypto.hexEncodedString(data)
+```
+
+Convert hex encoded string to data:
+
+```swift
+let data = crypto.dataFromHexEncodedString(hex)
+```
+
 ## AES
 
 The algorithm used by WebCrypto.swift is the cipher-block chaining ([CBC](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Cipher_Block_Chaining_.28CBC.29)) mode. For key generation, it uses [PKCS7](https://en.wikipedia.org/wiki/PKCS) as the padding method.
