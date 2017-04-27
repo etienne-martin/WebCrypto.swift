@@ -47,7 +47,7 @@ let string = String(data: data, encoding: .utf8)
 Convert data to hex encoded string:
 
 ```swift
-let hex = crypto.hexEncodedString(data)
+let hex = crypto.hexEncodedStringFromData(data)
 ```
 
 Convert hex encoded string to data:
