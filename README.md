@@ -30,27 +30,27 @@ let crypto = WebCrypto()
 
 #### Data types conversion
 
-WebCrypto.swift works with Swift's data object. If you need to pass a string to a method, you first need to convert it to data before passing it as an input. 
+WebCrypto.swift works with Swift's ```Data``` object. If you need to pass a string to a method, you first need to convert it to ```Data``` before passing it as an input. 
 
-Convert string to data:
+Convert ```String``` to ```Data```:
 
 ```swift
 let data = Data("This is a string".utf8)
 ```
 
-Convert data to string:
+Convert ```Data``` to ```String```:
 
 ```swift
 let string = String(data: data, encoding: .utf8)
 ```
 
-Convert data to hex encoded string:
+Convert ```Data``` to hex encoded string:
 
 ```swift
 let hex = crypto.hexEncodedStringFromData(data)
 ```
 
-Convert hex encoded string to data:
+Convert hex encoded string to ```Data```:
 
 ```swift
 let data = crypto.dataFromHexEncodedString(hex)
@@ -72,7 +72,6 @@ The key derivation algorithm is the same as the one used by [openSSL](https://en
 
 ```swift
 let input = Data("This is a string".utf8)
-
 let password = "password123"
 
 crypto.encrypt(data: input, password: password, callback: {(encrypted: Data?, error: Error?) in
@@ -94,7 +93,6 @@ This method requires a key and an IV in hexadecimal format. Use the [generateKey
 
 ```swift
 let input = Data("This is a string".utf8)
-
 let key = "6f0f1c6f0e56afd327ff07b7b63a2d8ae91ab0a2f0c8cd6889c0fc1d624ac1b8"
 let iv = "92c9d2c07a9f2e0a0d20710270047ea2"
 
@@ -170,6 +168,25 @@ crypto.sha384(data: input, callback: {(hash: String?, error: Error?) in
 
 crypto.sha512(data: input, callback: {(hash: String?, error: Error?) in
     print(hash!) // bc5d1ce2a9287ab94f1ed7eff379fbdab5e10d79f8f9dc4f921a2511f418e84561c8d6f63120cd960ea1f48afe09b3bffe2232bb920cc78a2bc873e05e76b30c
+})
+```
+
+## Error handling
+
+Check whether the ```error``` value is non-nil to know if an error has occurred.
+
+```swift 
+let input = Data("This is a string".utf8)
+let password = "password123"
+
+crypto.encrypt(data: input, password: password, callback: {(encrypted: Data?, error: Error?) in
+    if let errorMessage = error {
+        // Something went wrong
+        print(errorMessage)
+    }else{
+        // Success
+        print(encrypted!)
+    }
 })
 ```
 
