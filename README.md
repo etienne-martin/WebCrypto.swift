@@ -72,6 +72,7 @@ The key derivation algorithm is the same as the one used by [openSSL](https://en
 
 ```swift
 let input = Data("This is a string".utf8)
+
 let password = "password123"
 
 crypto.encrypt(data: input, password: password, callback: {(encrypted: Data?, error: Error?) in
@@ -93,6 +94,7 @@ This method requires a key and an IV in hexadecimal format. Use the [generateKey
 
 ```swift
 let input = Data("This is a string".utf8)
+
 let key = "6f0f1c6f0e56afd327ff07b7b63a2d8ae91ab0a2f0c8cd6889c0fc1d624ac1b8"
 let iv = "92c9d2c07a9f2e0a0d20710270047ea2"
 
@@ -177,6 +179,7 @@ Check whether the ```error``` value is non-nil to know if an error has occurred.
 
 ```swift 
 let input = Data("This is a string".utf8)
+
 let password = "password123"
 
 crypto.encrypt(data: input, password: password, callback: {(encrypted: Data?, error: Error?) in
