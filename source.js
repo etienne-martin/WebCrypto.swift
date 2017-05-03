@@ -340,7 +340,15 @@ if( window.crypto && !window.crypto.subtle && window.crypto.webkitSubtle ){
 }
 
 function postMessage(message){
-    window.webkit.messageHandlers.scriptHandler.postMessage(message);
+	// Handle javascript callback
+	if (typeof message.callback === "function") {
+		message.callback(message);
+	}else{
+		try{
+			// Handle swift callback
+	    	window.webkit.messageHandlers.scriptHandler.postMessage(message);
+		}catch(e){}
+    }
 }
     
 function hex2a(hexx){
@@ -351,7 +359,24 @@ function hex2a(hexx){
     return str;
 }
 function a2hex(buffer) { // buffer is an ArrayBuffer
-    return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
+  // create a byte array (Uint8Array) that we can use to read the array buffer
+  const byteArray = new Uint8Array(buffer);
+  
+  // for each element, we want to get its two-digit hexadecimal representation
+  const hexParts = [];
+  for( var i = 0; i < byteArray.length; i++ ){
+    // convert value to hexadecimal
+    const hex = byteArray[i].toString(16);
+    
+    // pad with zeros to length 2
+    const paddedHex = ('00' + hex).slice(-2);
+    
+    // push to array
+    hexParts.push(paddedHex);
+  }
+  
+  // join all the hex values of the elements into a single string
+  return hexParts.join('');
 }
 function convertStringToArrayBufferView(str){
     var bytes = new Uint8Array(str.length);
@@ -370,12 +395,14 @@ function convertArrayBufferViewtoString(buffer){
     return str;
 }
 function base64ToUtf8(str){
-    str = str.replace(/\s/g, '');
-    return decodeURIComponent(encodeURIComponent(window.atob(str)));
+    return decodeURIComponent(Array.prototype.map.call(atob(str), function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
 }
-// The following function is unused.
 function utf8ToBase64(str){
-    return window.btoa(unescape(encodeURIComponent(str)));
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+        return String.fromCharCode('0x' + p1);
+    }));
 }
 function isDefined(variable){
     return typeof variable !== "undefined";
@@ -387,7 +414,7 @@ var saltPrefix = "Salted__";
     
 function generateKey(params){
     
-    var length = params.length;
+    var length = params.length ? params.length : 256; // 256-bit key by default
     var callback = params.callback;
     
     if( length !== 128 && length !== 192 && length !== 256 ){
@@ -419,17 +446,29 @@ function generateKey(params){
 function generateRandomNumber(params){
     var length = params.length;
     var callback = params.callback;
+    
+    if( !isDefined(length) || isNaN(parseInt(length)) ){
+        postMessage({error: "invalidLength", callback:callback, func: "string"});
+        return false;
+    }
+    
     var randomNumber = a2hex(window.crypto.getRandomValues(new Uint8Array(length)));
     postMessage({result: randomNumber, callback: callback, func: "string"});
 }
     
 function encrypt(params){
+	
+	var callback = params.callback;
+	
+	if( !isDefined(params.data) ){
+        postMessage({error: "missingData", callback:callback, func: "data"});
+        return false;
+	}
     
     var data = base64ToUtf8(params.data);
 	var password = params.password;
 	var key = params.key;
 	var IV = params.iv;
-	var callback = params.callback;
 	
 	var plaintextData = convertStringToArrayBufferView(data);
     
@@ -457,6 +496,9 @@ function encrypt(params){
             postMessage({error: "invalidIvLength", callback:callback, func: "data"});
             return false;
         }
+	}else{
+        postMessage({error: "missingPasswordKeyOrIv", callback:callback, func: "data"});
+        return false;
 	}
     
     cryptoSubtle.importKey("raw", key, {name: "AES-CBC"}, false, ["encrypt", "decrypt"]).then(function(cryptokey){
@@ -478,7 +520,7 @@ function encrypt(params){
             }
             
             // Base64 encode the data
-            encryptedData = btoa(encryptedData);
+            encryptedData = utf8ToBase64(encryptedData);
              
             postMessage({result: encryptedData, callback: callback, func: "data"});
                
@@ -493,13 +535,19 @@ function encrypt(params){
 
 function decrypt(params){
 	
+	var callback = params.callback;
+	
+	if( !isDefined(params.data) ){
+        postMessage({error: "missingData", callback:callback, func: "data"});
+        return false;
+	}
+	
 	var data = base64ToUtf8(params.data);
 	var password = params.password;
 	var key = params.key;
 	var IV = params.iv;
-	var callback = params.callback;
 	
-    var encryptedData = convertStringToArrayBufferView(data);
+	var encryptedData = convertStringToArrayBufferView(data);
     
     // Check if there's a salt
     if( data.substr(0,8) === saltPrefix ){
@@ -531,12 +579,15 @@ function decrypt(params){
             postMessage({error: "invalidIvLength", callback:callback, func: "data"});
             return false;
         }
+	}else{
+        postMessage({error: "missingPasswordKeyOrIv", callback:callback, func: "data"});
+        return false;
 	}
     
     cryptoSubtle.importKey("raw", key, {name: "AES-CBC"}, false, ["encrypt", "decrypt"]).then(function(cryptokey){
     
         cryptoSubtle.decrypt({ name: "AES-CBC", iv: IV }, cryptokey, encryptedData).then(function(result){
-            var decryptedData = btoa(convertArrayBufferViewtoString(new Uint8Array(result)));
+            var decryptedData = utf8ToBase64(convertArrayBufferViewtoString(new Uint8Array(result)));
                               
             postMessage({result: decryptedData, callback: callback, func: "data"});
 
@@ -572,7 +623,11 @@ window.WebCrypto = {
     generateRandomNumber: generateRandomNumber,
     encrypt: encrypt,
     decrypt: decrypt,
-    hash: hash
+    hash: hash,
+    base64: {
+	    encode: utf8ToBase64,
+	    decode: base64ToUtf8
+    }
 };
 
 }

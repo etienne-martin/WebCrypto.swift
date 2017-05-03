@@ -1,0 +1,13 @@
+{
+    "name" : "WebCrypto.js",
+    "version" : "0.1.0",
+    "author" : "Etienne Martin",
+    "private" : true,
+    "devDependencies" : {
+        "grunt" :                       "~0.4.0",
+        "grunt-contrib-uglify":         "*",
+        "grunt-contrib-watch":          "*",
+        "grunt-contrib-concat":         "*",
+        "matchdep":                     "*"
+    }
+}
