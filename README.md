@@ -19,7 +19,7 @@ In comparison with other available solutions, here are the results obtained when
 
 ## Usage 
 
-1. Drag and drop [WebCrypto.swift](https://raw.githubusercontent.com/etienne-martin/WebCrypto.swift/master/WebCrypto/WebCrypto.swift) and [WebCrypto.js](https://raw.githubusercontent.com/etienne-martin/WebCrypto.swift/master/WebCrypto/WebCrypto.js) into your Xcode project.  
+1. Drag and drop [WebCrypto.swift](https://raw.githubusercontent.com/etienne-martin/WebCrypto.swift/master/WebCrypto.swift) and [WebCrypto.js](https://raw.githubusercontent.com/etienne-martin/WebCrypto.swift/master/WebCrypto.js) into your Xcode project.  
 2. Initialize the WebCrypto class in your code:
 
 ```swift
@@ -204,9 +204,9 @@ crypto.encrypt(data: input, password: password, callback: {(encrypted: Data?, er
 
 When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.
 
-Update the [README.md](https://github.com/etienne-martin/WebCrypto.swift) with details of changes to the library.
+Update the [README.md](https://github.com/etienne-martin/WebCrypto.swift/blob/master/README.md) with details of changes to the library.
 
-Update the [examples](https://github.com/etienne-martin/WebCrypto.swift/blob/master/WebCrypto/AppDelegate.swift) by demonstrating the changes to the library.
+Update the [examples](https://github.com/etienne-martin/WebCrypto.swift/blob/master/swift/WebCrypto/AppDelegate.swift) by demonstrating the changes to the library.
 
 Build the project and test all the features before submitting your pull request.
 
@@ -216,4 +216,4 @@ Build the project and test all the features before submitting your pull request.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/etienne-martin/WebCrypto.swift/blob/master/LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/etienne-martin/WebCrypto.swift/blob/master/LICENSE.txt) file for details
