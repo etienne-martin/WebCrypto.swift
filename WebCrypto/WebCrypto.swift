@@ -90,23 +90,19 @@ open class WebCrypto: NSObject, WKScriptMessageHandler{
         webView = WKWebView(frame: .zero)
         super.init()
         
+        let initializationErrorMessage = "Unable to load WebCrypto.js"
+        
         let js = loadJsFile("WebCrypto")
         if let jsFile = js {
-            
-            // Escape the javascript file before injecting it in the webview
-            // http://stackoverflow.com/questions/11478324/syntaxerror-unexpected-eof-when-evaluating-javascript-in-ios-uiwebview
-            //jsFile = jsFile.replacingOccurrences(of: "\\'", with: "\\\'")
-            //jsFile = jsFile.replacingOccurrences(of: "\\\"", with: "\\\\\"")
-            //jsFile = jsFile.replacingOccurrences(of: "\\r", with: "\\n")
-            //jsFile = jsFile.replacingOccurrences(of: "\\n", with: "\\\n")
-            
             webView.evaluate(script: jsFile, completion: { (result, error) in
                 if let errorMessage = error {
+                    print(initializationErrorMessage)
                     print(errorMessage)
                 }else{
                     self.webView.configuration.userContentController.add(self, name: "scriptHandler")
                     self.webView.evaluateJavaScript("initWebCrypto()") { (result, error) in
                         if let errorMessage = error {
+                            print(initializationErrorMessage)
                             print(errorMessage)
                         }
                     }
@@ -114,7 +110,7 @@ open class WebCrypto: NSObject, WKScriptMessageHandler{
             })
         }else{
             // WebCrypto.js couldn't be found
-            print("Unable to load WebCrypto.js")
+            print(initializationErrorMessage)
         }
     }
     

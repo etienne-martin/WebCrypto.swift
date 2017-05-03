@@ -244,28 +244,23 @@ function hexToBinaryString(hex) {
 
     return String.fromCharCode.apply(String, bytes);
 }
-function hashBinary(content, raw) {
+function hashBinary(content) {
     var hash = md51(content),
         ret = hex(hash);
 
-    return raw ? hexToBinaryString(ret) : ret;
+    return hexToBinaryString(ret);
 }
 
 // OpenSSL key derivation functions extracted from forge
 // https://github.com/digitalbazaar/forge
 
 function opensslDeriveBytes(password, salt, dkLen){	
-		
-	function hash(bytes) {
-		return hashBinary(bytes, true);
-	}
-	
 	if(salt === null) {
 		salt = '';
 	}
-	var digests = [hash(password + salt)];
+	var digests = [hashBinary(password + salt)];
 	for(var length = 16, i = 1; length < dkLen; ++i, length += 16) {
-		digests.push(hash(digests[i - 1] + password + salt));
+		digests.push(hashBinary(digests[i - 1] + password + salt));
 	}
 	return digests.join('').substr(0, dkLen);
 }
@@ -484,13 +479,6 @@ function encrypt(params){
             
             // Base64 encode the data
             encryptedData = btoa(encryptedData);
-            
-            /*
-            // Add new line every 64 chars to ensure compatibility with openssl
-            encryptedData = encryptedData.replace(/(.{64})/g, "$1\n");
-            // Trim new lines and then end the file with a new line to ensure compatibility with openssl
-            encryptedData = encryptedData.replace(/^\s+|\s+$/g, '')+"\n\n";
-            */
              
             postMessage({result: encryptedData, callback: callback, func: "data"});
                
