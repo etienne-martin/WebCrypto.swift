@@ -315,7 +315,7 @@ function createBuffer(input){
 	return new ByteStringBuffer(input);
 }
 function saltShaker(){
-	return convertArrayBufferViewtoString(window.crypto.getRandomValues(new Uint8Array(8)));
+	return arrayBufferToString(window.crypto.getRandomValues(new Uint8Array(8)));
 }
 function derivePassword(password, salt){
 	var keySize = 32; // generate 32-byte (256-bit) key
@@ -360,16 +360,16 @@ function hex2a(hexx){
 }
 function a2hex(buffer) { // buffer is an ArrayBuffer
   // create a byte array (Uint8Array) that we can use to read the array buffer
-  const byteArray = new Uint8Array(buffer);
+  var byteArray = new Uint8Array(buffer);
   
   // for each element, we want to get its two-digit hexadecimal representation
-  const hexParts = [];
+  var hexParts = [];
   for( var i = 0; i < byteArray.length; i++ ){
     // convert value to hexadecimal
-    const hex = byteArray[i].toString(16);
+    var hex = byteArray[i].toString(16);
     
     // pad with zeros to length 2
-    const paddedHex = ('00' + hex).slice(-2);
+    var paddedHex = ('00' + hex).slice(-2);
     
     // push to array
     hexParts.push(paddedHex);
@@ -378,7 +378,7 @@ function a2hex(buffer) { // buffer is an ArrayBuffer
   // join all the hex values of the elements into a single string
   return hexParts.join('');
 }
-function convertStringToArrayBufferView(str){
+function stringToArrayBuffer(str){
     var bytes = new Uint8Array(str.length);
     for (var iii = 0; iii < str.length; iii++){
         bytes[iii] = str.charCodeAt(iii);
@@ -386,7 +386,7 @@ function convertStringToArrayBufferView(str){
     
     return bytes;
 }
-function convertArrayBufferViewtoString(buffer){
+function arrayBufferToString(buffer){
     var str = "";
     for (var iii = 0; iii < buffer.byteLength; iii++){
         str += String.fromCharCode(buffer[iii]);
@@ -470,7 +470,7 @@ function encrypt(params){
 	var key = params.key;
 	var IV = params.iv;
 	
-	var plaintextData = convertStringToArrayBufferView(data);
+	var plaintextData = stringToArrayBuffer(data);
     
     if( isDefined(password) ){
         
@@ -480,14 +480,14 @@ function encrypt(params){
         }
         
 		var derivedPassword = derivePassword(password);
-		var key = convertStringToArrayBufferView(derivedPassword.key);
-	    var IV = convertStringToArrayBufferView(derivedPassword.iv);
+		var key = stringToArrayBuffer(derivedPassword.key);
+	    var IV = stringToArrayBuffer(derivedPassword.iv);
 		var salt = derivedPassword.salt;
 	
 	}else if( isDefined(key) && isDefined(IV) ){
         
-		key = convertStringToArrayBufferView(hex2a(key));
-	    IV = convertStringToArrayBufferView(hex2a(IV));
+		key = stringToArrayBuffer(hex2a(key));
+	    IV = stringToArrayBuffer(hex2a(IV));
         
         if( params.key.length !== 32 && params.key.length !== 48 && params.key.length !== 64 ){
             postMessage({error: "invalidKeyLength", callback:callback, func: "data"});
@@ -513,7 +513,7 @@ function encrypt(params){
 		    plaintextData
 		
 		).then(function(result){                    
-            var encryptedData = convertArrayBufferViewtoString(new Uint8Array(result));
+            var encryptedData = arrayBufferToString(new Uint8Array(result));
             
             if( salt ){
 	            encryptedData = saltPrefix+salt+encryptedData;
@@ -547,12 +547,12 @@ function decrypt(params){
 	var key = params.key;
 	var IV = params.iv;
 	
-	var encryptedData = convertStringToArrayBufferView(data);
+	var encryptedData = stringToArrayBuffer(data);
     
     // Check if there's a salt
     if( data.substr(0,8) === saltPrefix ){
     	var salt = data.substr(8,8);
-    	encryptedData = convertStringToArrayBufferView(data.substr(16,data.length));
+    	encryptedData = stringToArrayBuffer(data.substr(16,data.length));
 	}
 	
     if( isDefined(password) ){
@@ -563,13 +563,13 @@ function decrypt(params){
         }
         
 		var derivedPassword = derivePassword(password, salt);
-		var key = convertStringToArrayBufferView(derivedPassword.key);
-	    var IV = convertStringToArrayBufferView(derivedPassword.iv);
+		var key = stringToArrayBuffer(derivedPassword.key);
+	    var IV = stringToArrayBuffer(derivedPassword.iv);
 	
 	}else if( isDefined(key) && isDefined(IV) ){
         
-		key = convertStringToArrayBufferView(hex2a(key));
-	    IV = convertStringToArrayBufferView(hex2a(IV));
+		key = stringToArrayBuffer(hex2a(key));
+	    IV = stringToArrayBuffer(hex2a(IV));
         
         if( params.key.length !== 32 && params.key.length !== 48 && params.key.length !== 64 ){
             postMessage({error: "invalidKeyLength", callback:callback, func: "data"});
@@ -587,7 +587,7 @@ function decrypt(params){
     cryptoSubtle.importKey("raw", key, {name: "AES-CBC"}, false, ["encrypt", "decrypt"]).then(function(cryptokey){
     
         cryptoSubtle.decrypt({ name: "AES-CBC", iv: IV }, cryptokey, encryptedData).then(function(result){
-            var decryptedData = utf8ToBase64(convertArrayBufferViewtoString(new Uint8Array(result)));
+            var decryptedData = utf8ToBase64(arrayBufferToString(new Uint8Array(result)));
                               
             postMessage({result: decryptedData, callback: callback, func: "data"});
 
@@ -605,7 +605,7 @@ function decrypt(params){
 function hash(params){
     
     var algorithm = params.algorithm;
-    var data = convertStringToArrayBufferView(base64ToUtf8(params.data));
+    var data = stringToArrayBuffer(base64ToUtf8(params.data));
     var callback = params.callback;
         
     cryptoSubtle.digest({ name: algorithm, }, data).then(function(hash){
