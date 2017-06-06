@@ -13,10 +13,22 @@
 	initWebCrypto();
 	
 	var password = "password123";
-	var input = WebCrypto.base64.encode("aiwuéawi7dyawid");
+	var input = btoa("Nullam quis risus egét urna mollis ornare vel eu leo.");
 	
 	var key = "6f0f1c6f0e56afd327ff07b7b63a2d8ae91ab0a2f0c8cd6889c0fc1d624ac1b8";
 	var iv = "92c9d2c07a9f2e0a0d20710270047ea2"; // Remember to never re-use an initialization vector. Always generate a new IV every time you encrypt.
+	
+	WebCrypto.hash({
+		data: input,
+		algorithm: "SHA-256",
+		callback: function(response){
+			if( !response.error ){
+				console.log(response.result);
+			}else{
+				console.error(response.error);
+			}
+		}
+	});
 	
 	WebCrypto.encrypt({
 		data: input,
@@ -37,7 +49,7 @@
 			password: password,
 			callback: function(response){
 				if( !response.error ){
-					console.log(WebCrypto.base64.decode(response.result));
+					console.log(atob(response.result));
 				}else{
 					console.error(response.error);
 				}
@@ -66,7 +78,7 @@
 			iv: iv,
 			callback: function(response){
 				if( !response.error ){
-					console.log(WebCrypto.base64.decode(response.result));
+					console.log(atob(response.result));
 				}else{
 					console.error(response.error);
 				}

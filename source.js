@@ -394,16 +394,6 @@ function arrayBufferToString(buffer){
     
     return str;
 }
-function base64ToUtf8(str){
-    return decodeURIComponent(Array.prototype.map.call(atob(str), function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-}
-function utf8ToBase64(str){
-    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
-        return String.fromCharCode('0x' + p1);
-    }));
-}
 function isDefined(variable){
     return typeof variable !== "undefined";
 }
@@ -465,7 +455,7 @@ function encrypt(params){
         return false;
 	}
     
-    var data = base64ToUtf8(params.data);
+    var data = atob(params.data);
 	var password = params.password;
 	var key = params.key;
 	var IV = params.iv;
@@ -520,7 +510,7 @@ function encrypt(params){
             }
             
             // Base64 encode the data
-            encryptedData = utf8ToBase64(encryptedData);
+            encryptedData = btoa(encryptedData);
              
             postMessage({result: encryptedData, callback: callback, func: "data"});
                
@@ -542,7 +532,7 @@ function decrypt(params){
         return false;
 	}
 	
-	var data = base64ToUtf8(params.data);
+	var data = atob(params.data);
 	var password = params.password;
 	var key = params.key;
 	var IV = params.iv;
@@ -587,7 +577,7 @@ function decrypt(params){
     cryptoSubtle.importKey("raw", key, {name: "AES-CBC"}, false, ["encrypt", "decrypt"]).then(function(cryptokey){
     
         cryptoSubtle.decrypt({ name: "AES-CBC", iv: IV }, cryptokey, encryptedData).then(function(result){
-            var decryptedData = utf8ToBase64(arrayBufferToString(new Uint8Array(result)));
+            var decryptedData = btoa(arrayBufferToString(new Uint8Array(result)));
                               
             postMessage({result: decryptedData, callback: callback, func: "data"});
 
@@ -603,9 +593,11 @@ function decrypt(params){
 // Hashing functions
     
 function hash(params){
+	
+	// TODO: Validate algorithm
     
-    var algorithm = params.algorithm;
-    var data = stringToArrayBuffer(base64ToUtf8(params.data));
+    var algorithm = params.algorithm; // SHA-1, SHA-256, SHA-384 or SHA-512
+    var data = stringToArrayBuffer(atob(params.data));
     var callback = params.callback;
         
     cryptoSubtle.digest({ name: algorithm, }, data).then(function(hash){
@@ -623,11 +615,7 @@ window.WebCrypto = {
     generateRandomNumber: generateRandomNumber,
     encrypt: encrypt,
     decrypt: decrypt,
-    hash: hash,
-    base64: {
-	    encode: utf8ToBase64,
-	    decode: base64ToUtf8
-    }
+    hash: hash
 };
 
 }

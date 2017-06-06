@@ -37,7 +37,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // AES string encryption
         
         let password = "awdawdawdawd"
-        let stringSample = Data("Nullam quis risus eget urna mollis ornare vel eu leo.".utf8)
+        let stringSample = Data("Nullam quis risus egét urna mollis ornare vel eu leo.".utf8)
         
         crypto.encrypt(data: stringSample, password: password, callback: {(encrypted: Data?, error: Error?) in
             crypto.decrypt(data: encrypted!, password: password, callback: {(decrypted: Data?, error: Error?) in
@@ -93,7 +93,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Hashing functions
         
         crypto.sha1(data: stringSample, callback: {(hash: String?, error: Error?) in
-            if( hash! == "fe2aa35f4fcb32ae2245b48d8bd814eb261a977c" ){
+            if( hash! == "eab24f488a7cfbefde8436ad07a7402b98d50027" ){
                 print("SHA1: success")
             }else{
                 print("Fail")
@@ -101,7 +101,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         })
         
         crypto.sha256(data: stringSample, callback: {(hash: String?, error: Error?) in
-            if( hash! == "0427da5c514a96f4121ca458ea805d20c3f89c84a025ec8c35a5ff6af26cdce9" ){
+            if( hash! == "84be75d50e83e91f79a204b8191930b05a94e7fb4703c00d8a59e32890a9b2b0" ){
                 print("SHA256: success")
             }else{
                 print("Fail")
@@ -109,7 +109,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         })
         
         crypto.sha384(data: stringSample, callback: {(hash: String?, error: Error?) in
-            if( hash! == "de7c12a48cddba478cb5225266a555565332d2e0aa954023467118644f5ebab0264962c8138a9597794db02e48c9928e" ){
+            if( hash! == "7cee02575d6aaccd056914b1127b8f6a58fe3151f9b364fb747152d626ee24f153bc844c6e29ceaba81103323f4622a8" ){
                 print("SHA384: success")
             }else{
                 print("Fail")
@@ -117,7 +117,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         })
         
         crypto.sha512(data: stringSample, callback: {(hash: String?, error: Error?) in
-            if( hash! == "72cfbd33938d7671ea1c91598d8592b76f0c3b94185baf951d651a56b75ceec8a9d6563a1614c5524538ead6fa1d52b24c726a8ca16300767bc2f71fa8325ddb" ){
+            if( hash! == "06024333c37aa22f2bcca35687cf603438c1e33aaa67b3435c464eff73f5ea03a030f223c274d96f6cd388837871c109a075e5dc2e911c23baacadb36450ae50" ){
                 print("SHA512: success")
             }else{
                 print("Fail")
