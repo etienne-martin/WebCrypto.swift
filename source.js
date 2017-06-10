@@ -417,7 +417,8 @@ function generateKey(params){
     var callback = params.callback;
     
     if( length !== 128 && length !== 192 && length !== 256 ){
-        postMessage({error: "invalidKeyLength", callback:callback, func: "string"});
+        postMessage({error: "invalidKeyLength", callback: callback, func: "string"});
+        callback = null
         return false;
     }
     
@@ -434,11 +435,14 @@ function generateKey(params){
         ).then(function(keydata){
             var key = a2hex(new Uint8Array(keydata));
             postMessage({result: key, callback: callback, func: "string"});
+			callback = null
         }).catch(function(error){
             postMessage({error:error, callback:callback, func: "string"});
+			callback = null
         });
     }).catch(function(error){
         postMessage({error:error, callback:callback, func: "string"});
+        callback = null
     });
 }
     
@@ -448,11 +452,13 @@ function generateRandomNumber(params){
     
     if( !isDefined(length) || isNaN(parseInt(length)) ){
         postMessage({error: "invalidLength", callback:callback, func: "string"});
+        callback = null
         return false;
     }
     
     var randomNumber = a2hex(window.crypto.getRandomValues(new Uint8Array(length)));
     postMessage({result: randomNumber, callback: callback, func: "string"});
+    callback = null
 }
     
 function encrypt(params){
@@ -461,6 +467,7 @@ function encrypt(params){
 	
 	if( !isDefined(params.data) ){
         postMessage({error: "missingData", callback:callback, func: "data"});
+        callback = null
         return false;
 	}
     
@@ -475,6 +482,7 @@ function encrypt(params){
         
         if( password.length === 0 ){
             postMessage({error: "invalidPasswordLength", callback:callback, func: "data"});
+            callback = null
             return false;
         }
         
@@ -490,13 +498,16 @@ function encrypt(params){
         
         if( params.key.length !== 32 && params.key.length !== 48 && params.key.length !== 64 ){
             postMessage({error: "invalidKeyLength", callback:callback, func: "data"});
+            callback = null
             return false;
         }else if( params.iv.length !== 32 ){
             postMessage({error: "invalidIvLength", callback:callback, func: "data"});
+            callback = null
             return false;
         }
 	}else{
         postMessage({error: "missingPasswordKeyOrIv", callback:callback, func: "data"});
+        callback = null
         return false;
 	}
     
@@ -522,13 +533,16 @@ function encrypt(params){
             encryptedData = btoa(encryptedData);
              
             postMessage({result: encryptedData, callback: callback, func: "data"});
+            callback = null
                
 		}).catch(function(error){
             postMessage({error:error, callback:callback, func: "data"});
+            callback = null
 		});
                                                                                               
     }).catch(function(error){
         postMessage({error:error, callback:callback, func: "data"});
+        callback = null
     });
 }
 
@@ -538,6 +552,7 @@ function decrypt(params){
 	
 	if( !isDefined(params.data) ){
         postMessage({error: "missingData", callback:callback, func: "data"});
+        callback = null
         return false;
 	}
 	
@@ -558,6 +573,7 @@ function decrypt(params){
         
         if( password.length === 0 ){
             postMessage({error: "invalidPasswordLength", callback:callback, func: "data"});
+			callback = null
             return false;
         }
         
@@ -572,14 +588,17 @@ function decrypt(params){
         
         if( params.key.length !== 32 && params.key.length !== 48 && params.key.length !== 64 ){
             postMessage({error: "invalidKeyLength", callback:callback, func: "data"});
+			callback = null
             return false;
             
         }else if( params.iv.length !== 32 ){
             postMessage({error: "invalidIvLength", callback:callback, func: "data"});
+			callback = null
             return false;
         }
 	}else{
         postMessage({error: "missingPasswordKeyOrIv", callback:callback, func: "data"});
+        callback = null
         return false;
 	}
     
@@ -589,13 +608,16 @@ function decrypt(params){
             var decryptedData = btoa(arrayBufferToString(new Uint8Array(result)));
                               
             postMessage({result: decryptedData, callback: callback, func: "data"});
+			callback = null
 
         }).catch(function(error){
             postMessage({error: error, callback: callback, func: "data"});
+			callback = null
         });
 
     }).catch(function(error){
         postMessage({error: error, callback: callback, func: "data"});
+        callback = null
     });
 }
     
@@ -612,8 +634,10 @@ function hash(params){
     cryptoSubtle.digest({ name: algorithm, }, data).then(function(hash){
         var hash = a2hex(new Uint8Array(hash));
         postMessage({result: hash, callback: callback, func: "string"});
+        callback = null
     }).catch(function(error){
         postMessage({error: error, callback: callback, func: "string"});
+        callback = null
     });
 }
     
