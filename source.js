@@ -179,6 +179,15 @@ function md5cycle(x, k) {
     x[2] = c + x[2] | 0;
     x[3] = d + x[3] | 0;
 }
+function md5blk(s) {
+    var md5blks = [],
+        i; /* Andy King said do it this way. */
+
+    for (i = 0; i < 64; i += 4) {
+        md5blks[i >> 2] = s.charCodeAt(i) + (s.charCodeAt(i + 1) << 8) + (s.charCodeAt(i + 2) << 16) + (s.charCodeAt(i + 3) << 24);
+    }
+    return md5blks;
+}
 function md51(s) {
     var n = s.length,
         state = [1732584193, -271733879, -1732584194, 271733878],
@@ -408,7 +417,7 @@ function generateKey(params){
     var callback = params.callback;
     
     if( length !== 128 && length !== 192 && length !== 256 ){
-        postMessage({error: "invalidKeyLength", callback: callback, func: "string"});
+        postMessage({error: "invalidKeyLength", callback:callback, func: "string"});
         return false;
     }
     
