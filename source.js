@@ -427,19 +427,19 @@ function generateKey(params){
         },
         true, //whether the key is extractable (i.e. can be used in exportKey)
         ["encrypt", "decrypt"] //can be "encrypt", "decrypt", "wrapKey", or "unwrapKey"
-    ).then(function(key){
+    ).catch(function(error){
+        postMessage({error:error, callback:callback, func: "string"});
+    }).then(function(key){
         cryptoSubtle.exportKey(
             "raw", //can be "jwk" or "raw"
             key //extractable must be true
-        ).then(function(keydata){
+        ).catch(function(error){
+            postMessage({error:error, callback:callback, func: "string"});
+        }).then(function(keydata){
             var key = a2hex(new Uint8Array(keydata));
             postMessage({result: key, callback: callback, func: "string"});
-        }).catch(function(error){
-            postMessage({error:error, callback:callback, func: "string"});
-        });
-    }).catch(function(error){
-        postMessage({error:error, callback:callback, func: "string"});
-    });
+        })
+    })
 }
     
 function generateRandomNumber(params){
@@ -500,7 +500,9 @@ function encrypt(params){
         return false;
 	}
     
-    cryptoSubtle.importKey("raw", key, {name: "AES-CBC"}, false, ["encrypt", "decrypt"]).then(function(cryptokey){
+    cryptoSubtle.importKey("raw", key, {name: "AES-CBC"}, false, ["encrypt", "decrypt"]).catch(function(error){
+        postMessage({error:error, callback:callback, func: "data"});
+    }).then(function(cryptokey){
                                                                                               
         cryptoSubtle.encrypt({
 		    	name: "AES-CBC",
@@ -511,7 +513,9 @@ function encrypt(params){
 		    cryptokey,
 		    plaintextData
 		
-		).then(function(result){                    
+		).catch(function(error){
+            postMessage({error:error, callback:callback, func: "data"});
+		}).then(function(result){                    
             var encryptedData = arrayBufferToString(new Uint8Array(result));
             
             if( salt ){
@@ -523,13 +527,9 @@ function encrypt(params){
              
             postMessage({result: encryptedData, callback: callback, func: "data"});
                
-		}).catch(function(error){
-            postMessage({error:error, callback:callback, func: "data"});
-		});
+		})
                                                                                               
-    }).catch(function(error){
-        postMessage({error:error, callback:callback, func: "data"});
-    });
+    })
 }
 
 function decrypt(params){
@@ -583,20 +583,20 @@ function decrypt(params){
         return false;
 	}
     
-    cryptoSubtle.importKey("raw", key, {name: "AES-CBC"}, false, ["encrypt", "decrypt"]).then(function(cryptokey){
+    cryptoSubtle.importKey("raw", key, {name: "AES-CBC"}, false, ["encrypt", "decrypt"]).catch(function(error){
+        postMessage({error: error, callback: callback, func: "data"});
+    }).then(function(cryptokey){
     
-        cryptoSubtle.decrypt({ name: "AES-CBC", iv: IV }, cryptokey, encryptedData).then(function(result){
+        cryptoSubtle.decrypt({ name: "AES-CBC", iv: IV }, cryptokey, encryptedData).catch(function(error){
+            postMessage({error: error, callback: callback, func: "data"});
+        }).then(function(result){
             var decryptedData = btoa(arrayBufferToString(new Uint8Array(result)));
                               
             postMessage({result: decryptedData, callback: callback, func: "data"});
 
-        }).catch(function(error){
-            postMessage({error: error, callback: callback, func: "data"});
-        });
+        })
 
-    }).catch(function(error){
-        postMessage({error: error, callback: callback, func: "data"});
-    });
+    })
 }
     
 // Hashing functions
@@ -609,12 +609,12 @@ function hash(params){
     var data = stringToArrayBuffer(atob(params.data));
     var callback = params.callback;
         
-    cryptoSubtle.digest({ name: algorithm, }, data).then(function(hash){
+    cryptoSubtle.digest({ name: algorithm, }, data).catch(function(error){
+        postMessage({error: error, callback: callback, func: "string"});
+    }).then(function(hash){
         var hash = a2hex(new Uint8Array(hash));
         postMessage({result: hash, callback: callback, func: "string"});
-    }).catch(function(error){
-        postMessage({error: error, callback: callback, func: "string"});
-    });
+    })
 }
     
 // Export
