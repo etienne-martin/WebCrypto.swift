@@ -15,7 +15,7 @@ In comparison with other available solutions, here are the results obtained when
 **RNCryptor**        92ms  
 **openSSL:**         139ms   
 **WebCrypto.swift:** 1545ms   
-**CryptoSwift:**     24366ms  
+**CryptoSwift:**     5255ms  
 
 ## Usage 
 
